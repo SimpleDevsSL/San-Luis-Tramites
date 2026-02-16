@@ -25,7 +25,7 @@ const values = [
     icon: Clock,
     title: "Practico",
     description:
-      "Sabemos lo que es perder una manana por no tener la informacion correcta. Nuestro objetivo es ahorrarte tiempo y frustracion.",
+      "Sabemos lo que es perder un dia por no tener la informacion correcta. Nuestro objetivo es ahorrarte tiempo y frustracion.",
   },
   {
     icon: Heart,
