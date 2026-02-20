@@ -136,17 +136,17 @@ export const guides: Guide[] = [
       { concepto: "CENAT", monto: "$6800" },
       { concepto: "Tasa Municipal", monto: "$4500" },
       { concepto: "Examen Medico", monto: "$10.000" },
-      { concepto: "Costo final de la licencia", monto: "Depende de los anos de validez que elijas" },
+      { concepto: "Costo final de la licencia", monto: "Depende de los años de validez que elijas" },
     ],
     costo: {
-      monto: "El costo total depende de los anos de validez que elijas para la licencia.",
+      monto: "El costo total depende de los años de validez que elijas para la licencia.",
       formasDePago: ["Efectivo", "Rapipago"],
       actualizacion: "Enero 2026",
     },
     ubicaciones: [
       {
         nombre: "Paso 1 \u2013 Solicitud inicial",
-        descripcion: "Dirigite a la Municipalidad (al frente del taller) para solicitar turno y documentacion.",
+        descripcion: "Dirigite a la Municipalidad (al frente de la UNSL) para solicitar turno y documentacion.",
       },
       {
         nombre: "Paso 2 \u2013 Examen medico y foto",
@@ -222,7 +222,7 @@ export const guides: Guide[] = [
       "Titulo o cedula del automotor (para verificar datos)",
     ],
     costo: {
-      monto: "El monto depende del modelo, ano y valuacion del vehiculo. Se puede consultar online.",
+      monto: "El monto depende del modelo, año y valuacion del vehiculo. Se puede consultar online.",
       formasDePago: ["Pago online con tarjeta", "Transferencia", "Efectivo en bancos habilitados", "Rapipago / Pago Facil"],
       actualizacion: "Enero 2026",
     },
