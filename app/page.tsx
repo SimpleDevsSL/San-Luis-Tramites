@@ -8,7 +8,7 @@ export default function HomePage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-card">
+      <section className="relative bg-card">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.06),transparent_70%)]" />
         <div className="relative mx-auto max-w-5xl px-4 pb-16 pt-20 lg:px-6 lg:pb-20 lg:pt-28">
           <div className="flex flex-col items-center text-center">
