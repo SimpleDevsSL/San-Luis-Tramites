@@ -1,8 +1,7 @@
 import { SearchBar } from "@/components/search-bar"
-import { GuideCard } from "@/components/guide-card"
-import { guides } from "@/lib/guides"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
+import TramitesGrid from "@/components/TramitesGrid"
 
 export default function HomePage() {
   return (
@@ -50,11 +49,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {guides.map((guide) => (
-            <GuideCard key={guide.slug} guide={guide} />
-          ))}
-        </div>
+        <TramitesGrid />
 
         <div className="mt-6 text-center sm:hidden">
           <Link
