@@ -3,7 +3,7 @@
 import axios from "axios";
 import React from "react"
 import { GuideCard } from "@/components/guide-card"
-import { guides } from "@/lib/guides"
+
 
 
 const tramitesGrid = () => {
@@ -27,7 +27,6 @@ const tramitesGrid = () => {
       setTramites(response.data);
     }).catch((error) => {
       console.error("Error fetching tramites:", error);
-      setTramites(guides);
     });
   }
 

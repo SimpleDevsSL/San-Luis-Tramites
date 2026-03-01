@@ -34,14 +34,14 @@ function GuideIcon({ slug }: { slug: string }) {
 export function GuideCard({ guide }: { guide: Guide }) {
   return (
     <Link
-      href={`/tramites/${guide.titulo_abreviado.toLowerCase().replace(/\s+/g, "-")}`}
+      href={`/tramites/${guide.id}`}
       className="group flex flex-col rounded-xl border border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-md"
     >
       <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
         <GuideIcon slug={guide.titulo_abreviado.toLowerCase().replace(/\s+/g, "-")} />
       </div>
       <h3 className="text-base font-semibold text-foreground">
-        {guide.titulo_abreviado.toLowerCase().replace(/\s+/g, "-")}
+        {guide.titulo_abreviado}
       </h3>
       <p className="mt-1.5 flex-1 text-sm leading-relaxed text-muted-foreground">
         {guide.description}

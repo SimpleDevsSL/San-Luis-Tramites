@@ -3,18 +3,36 @@
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { Search } from "lucide-react"
-import { guides } from "@/lib/guides"
+import { getGuides, type Guide } from "@/lib/guides"
 
 export function SearchBar() {
   const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
+  const [guides, setGuides] = useState<Guide[]>([])
+  const [loading, setLoading] = useState(true)
   const ref = useRef<HTMLDivElement>(null)
+
+  // Cargar guides al montar el componente
+  useEffect(() => {
+    async function loadGuides() {
+      try {
+        const data = await getGuides()
+        setGuides(data)
+        console.log("Guides loaded:", data)
+      } catch (error) {
+        console.error("Error loading guides:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadGuides()
+  }, [])
 
   const filtered = query.trim()
     ? guides.filter(
         (g) =>
-          g.title.toLowerCase().includes(query.toLowerCase()) ||
-          g.shortTitle.toLowerCase().includes(query.toLowerCase()) ||
+          g.titulo.toLowerCase().includes(query.toLowerCase()) ||
+          g.titulo_abreviado.toLowerCase().includes(query.toLowerCase()) ||
           g.description.toLowerCase().includes(query.toLowerCase())
       )
     : []
@@ -44,6 +62,7 @@ export function SearchBar() {
           }}
           onFocus={() => setOpen(true)}
           aria-label="Buscar tramite"
+          disabled={loading}
         />
       </div>
 
@@ -51,22 +70,22 @@ export function SearchBar() {
         <div className="absolute top-full z-50 mt-2 w-full rounded-lg border border-border bg-card p-1 shadow-lg">
           {filtered.map((guide) => (
             <Link
-              key={guide.slug}
-              href={`/tramites/${guide.slug}`}
+              key={guide.id}
+              href={`/tramites/${guide.id}`}
               onClick={() => {
                 setOpen(false)
                 setQuery("")
               }}
               className="block rounded-md px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-secondary"
             >
-              <span className="font-medium">{guide.shortTitle}</span>
+              <span className="font-medium">{guide.titulo_abreviado}</span>
               <span className="ml-2 text-muted-foreground">{guide.description.slice(0, 60)}...</span>
             </Link>
           ))}
         </div>
       )}
 
-      {open && query.trim() && filtered.length === 0 && (
+      {open && query.trim() && filtered.length === 0 && !loading && (
         <div className="absolute top-full z-50 mt-2 w-full rounded-lg border border-border bg-card p-4 shadow-lg">
           <p className="text-center text-sm text-muted-foreground">
             No encontramos resultados para &ldquo;{query}&rdquo;
