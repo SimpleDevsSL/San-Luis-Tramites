@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { SearchBar } from "@/components/search-bar"
 import { GuideCard } from "@/components/guide-card"
-import { guides } from "@/lib/guides"
+import { getGuides } from "@/lib/guides"
 
 export const metadata: Metadata = {
   title: "Todos los Tramites",
@@ -9,7 +9,9 @@ export const metadata: Metadata = {
     "Lista completa de guias de tramites en San Luis. CIPE, Licencia de Conducir, Rentas, DOSEP, Boleto Estudiantil y mas.",
 }
 
-export default function TramitesPage() {
+export default async function TramitesPage() {
+  const guides = await getGuides()
+
   return (
     <section className="mx-auto max-w-5xl px-4 py-12 lg:px-6 lg:py-16">
       <div className="mb-10">

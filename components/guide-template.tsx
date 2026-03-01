@@ -9,21 +9,15 @@ import {
   DollarSign,
   Clock,
   BookOpen,
-  ListOrdered,
   Info,
 } from "lucide-react"
 import type { Guide } from "@/lib/guides"
 import { CopyButton } from "./copy-button"
 
 export function GuideTemplate({ guide }: { guide: Guide }) {
-  const checklistText = guide.requisitosCategorias
-    ? guide.requisitosCategorias
-        .map(
-          (cat) =>
-            `${cat.categoria}:\n${cat.items.map((item, i) => `  ${i + 1}. ${item}`).join("\n")}`
-        )
-        .join("\n\n")
-    : guide.requisitos?.map((r, i) => `${i + 1}. ${r}`).join("\n") || ""
+  const checklistText = guide.requisitos
+    ?.map((r, i) => `${i + 1}. ${typeof r === "string" ? r : r.detalle}`)
+    .join("\n") || ""
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-10 lg:px-6 lg:py-14">
@@ -89,29 +83,7 @@ export function GuideTemplate({ guide }: { guide: Guide }) {
             Lo que tenes que llevar, sin sorpresas.
           </p>
           <div className="rounded-lg border border-border bg-card p-5">
-            {guide.requisitosCategorias && Array.isArray(guide.requisitosCategorias) && guide.requisitosCategorias.length > 0 ? (
-              <div className="space-y-6">
-                {guide.requisitosCategorias.map((cat, catIdx) => (
-                  <div key={catIdx}>
-                    <h3 className="mb-3 text-sm font-semibold text-foreground">
-                      {typeof cat.categoria === "string" ? cat.categoria : "Categoría"}
-                    </h3>
-                    <ul className="space-y-2.5">
-                      {Array.isArray(cat.items) ? (
-                        cat.items.map((item, idx) => (
-                          <li key={idx} className="flex items-start gap-3">
-                            <CircleCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                            <span className="text-sm leading-relaxed text-foreground">
-                              {typeof item === "string" ? item : JSON.stringify(item)}
-                            </span>
-                          </li>
-                        ))
-                      ) : null}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            ) : Array.isArray(guide.requisitos) ? (
+            {Array.isArray(guide.requisitos) && guide.requisitos.length > 0 ? (
               <ul className="space-y-3">
                 {guide.requisitos.map((req, idx) => (
                   <li key={idx} className="flex items-start gap-3">
@@ -123,15 +95,6 @@ export function GuideTemplate({ guide }: { guide: Guide }) {
                 ))}
               </ul>
             ) : null}
-
-            {guide.requisitosAviso && typeof guide.requisitosAviso === "string" && (
-              <div className="mt-5 flex items-start gap-2.5 rounded-md border border-primary/20 bg-primary/5 p-3">
-                <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <p className="text-xs font-medium leading-relaxed text-foreground">
-                  {guide.requisitosAviso}
-                </p>
-              </div>
-            )}
 
             <div className="mt-5 border-t border-border pt-4">
               <CopyButton text={checklistText} />
@@ -146,28 +109,11 @@ export function GuideTemplate({ guide }: { guide: Guide }) {
             Cuanto cuesta?
           </h2>
           <div className="rounded-lg border border-border bg-card p-5">
-            {guide.costoDetalles && Array.isArray(guide.costoDetalles) && guide.costoDetalles.length > 0 ? (
-              <div className="space-y-2">
-                {guide.costoDetalles.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between rounded-md bg-secondary/50 px-3 py-2"
-                  >
-                    <span className="text-sm text-foreground">
-                      {typeof item.concepto === "string" ? item.concepto : "Concepto"}
-                    </span>
-                    <span className="text-sm font-semibold text-foreground">
-                      {typeof item.monto === "string" ? item.monto : ""}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm leading-relaxed text-foreground">
-                {typeof guide.costo?.monto === "string" ? guide.costo.monto : "Consultar"}
-              </p>
-            )}
-            {guide.costo?.formas_pago && Array.isArray(guide.costo.formas_pago.split(",")) && guide.costo.formas_pago.split(",").length > 0 && (
+            <p className="text-sm leading-relaxed text-foreground">
+              {typeof guide.costo?.monto === "string" ? guide.costo.monto : "Consultar"}
+            </p>
+
+            {guide.costo?.formas_pago && (
               <div className="mt-4">
                 <p className="mb-1.5 text-xs font-medium text-muted-foreground">
                   Formas de pago:
@@ -178,12 +124,13 @@ export function GuideTemplate({ guide }: { guide: Guide }) {
                       key={idx}
                       className="rounded-md bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground"
                     >
-                      {typeof fp === "string" ? fp : ""}
+                      {fp.trim()}
                     </span>
                   ))}
                 </div>
               </div>
             )}
+
             <p className="mt-3 text-xs text-muted-foreground">
               Actualizado: {typeof guide.costo?.fecha_actualizacion === "string" ? guide.costo.fecha_actualizacion : ""}
             </p>
@@ -197,32 +144,20 @@ export function GuideTemplate({ guide }: { guide: Guide }) {
             Donde y cuando?
           </h2>
           <div className="rounded-lg border border-border bg-card p-5">
-            {guide.ubicaciones && guide.ubicaciones.length > 0 ? (
-              <div className="space-y-4">
-                {guide.ubicaciones.map((ub, idx) => (
-                  <div key={idx}>
-                    <p className="text-sm font-medium text-foreground">{ub.nombre}</p>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                      {ub.descripcion}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-2 text-sm leading-relaxed text-foreground">
-                <p>
-                  <span className="font-medium">Direccion: </span>
-                  {guide.sedes[0].direccion}
-                </p>
-                <p>
-                  <span className="font-medium">Horarios: </span>
-                  {guide.sedes[0].horarios}
-                </p>
-              </div>
-            )}
-            {guide.sedes?.mapsUrl && (
+            <div className="space-y-2 text-sm leading-relaxed text-foreground">
+              <p>
+                <span className="font-medium">Direccion: </span>
+                {guide.sedes[0].direccion || "No disponible"}
+              </p>
+              <p>
+                <span className="font-medium">Horarios: </span>
+                {guide.sedes[0].horarios || "No disponible"}
+              </p>
+            </div>
+
+            {guide.sedes[0].mapsUrl && (
               <a
-                href={guide.sedes.mapsUrl}
+                href={guide.sedes[0].mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
@@ -233,47 +168,6 @@ export function GuideTemplate({ guide }: { guide: Guide }) {
             )}
           </div>
         </section>
-
-        {/* Paso a Paso */}
-        {guide.pasos && guide.pasos.length > 0 && (
-          <section>
-            <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground">
-              <ListOrdered className="h-5 w-5 text-accent" />
-              Paso a Paso Simplificado
-            </h2>
-            <div className="space-y-4">
-              {guide.pasos.map((paso, idx) => (
-                <div
-                  key={idx}
-                  className="relative rounded-lg border border-border bg-card p-5 pl-14"
-                >
-                  <span className="absolute left-4 top-4 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                    {idx + 1}
-                  </span>
-                  <h3 className="text-sm font-semibold text-foreground">
-                    {paso.titulo}
-                  </h3>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                    {paso.descripcion}
-                  </p>
-                  {paso.detalles && paso.detalles.length > 0 && (
-                    <ul className="mt-3 space-y-1.5">
-                      {paso.detalles.map((d, dIdx) => (
-                        <li
-                          key={dIdx}
-                          className="flex items-center gap-2 text-sm text-muted-foreground"
-                        >
-                          <span className="h-1 w-1 shrink-0 rounded-full bg-muted-foreground" />
-                          {d}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* Consejo Puntano */}
         {guide.consejo_puntano && (

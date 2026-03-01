@@ -27,17 +27,17 @@ export interface Guide {
   fecha_ultima_actualizacion: string
   definicion: string
   destinatarios: string
-  requisitos: string[]
+  requisitos: Array<{detalle: string, id:number}>
   costo: {
     monto: string
-    formas_pago: string[]
+    formas_pago: string
     fecha_actualizacion: string
   }
-  sedes: {
+  sedes: Array< {
     direccion: string
     horarios: string
     mapsUrl: string
-  }
+  }>
   consejo_puntano: string
   enlacesOficiales: Array<{ label: string; url: string }>
   fuentes_informacion: string
@@ -46,11 +46,11 @@ export interface Guide {
   // costoDetalles?: Array<{ concepto: string; monto: string }>
   // ubicaciones?: Array<{ nombre: string; descripcion: string }>
   // pasos?: Array<{ titulo: string; descripcion: string; detalles?: string[] }>
-  sedes?: {
-    direccion: string
-    horarios: string
-    mapsUrl: string
-  }
+  // sedes?: {
+  //   direccion: string
+  //   horarios: string
+  //   mapsUrl: string
+  // }
 }
 
 export async function getGuides(): Promise<Guide[]> {
@@ -58,7 +58,7 @@ export async function getGuides(): Promise<Guide[]> {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/tramites/`
     )
-      const guidesData = response.data.map((tramite)=>{
+      const guidesData = response.data.map((tramite: Guide)=>{
         return {
           ...
           tramite,
