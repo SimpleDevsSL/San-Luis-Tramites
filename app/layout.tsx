@@ -22,6 +22,7 @@ export const metadata: Metadata = {
   },
   description:
     'Traducimos la burocracia a lenguaje humano. Guia independiente y comunitaria para tramites en San Luis.',
+  manifest: '/manifest.json',
 }
 
 export const viewport: Viewport = {

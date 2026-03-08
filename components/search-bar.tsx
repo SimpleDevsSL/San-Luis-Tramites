@@ -1,78 +1,84 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import Link from "next/link"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Search } from "lucide-react"
-import { guides } from "@/lib/guides"
+import { getGuides, type Guide } from "@/lib/guides"
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
 
 export function SearchBar() {
-  const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  const filtered = query.trim()
-    ? guides.filter(
-        (g) =>
-          g.title.toLowerCase().includes(query.toLowerCase()) ||
-          g.shortTitle.toLowerCase().includes(query.toLowerCase()) ||
-          g.description.toLowerCase().includes(query.toLowerCase())
-      )
-    : []
+  const [guides, setGuides] = useState<Guide[]>([])
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false)
+    async function loadGuides() {
+      try {
+        const data = await getGuides()
+        setGuides(data)
+      } catch (error) {
+        console.error("Error loading guides:", error)
+      } finally {
+        setLoading(false)
       }
     }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
+    loadGuides()
+  }, [])
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setOpen((open) => !open)
+      }
+    }
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
   }, [])
 
   return (
-    <div ref={ref} className="relative w-full max-w-xl">
-      <div className="relative">
-        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <input
-          type="search"
-          placeholder="Buscar tramite (CIPE, Licencia, Rentas...)"
-          className="h-12 w-full rounded-lg border border-border bg-card pl-10 pr-4 text-sm text-foreground shadow-sm transition-shadow placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value)
-            setOpen(true)
-          }}
-          onFocus={() => setOpen(true)}
-          aria-label="Buscar tramite"
-        />
-      </div>
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="relative inline-flex h-12 w-full items-center justify-start rounded-xl border border-border bg-card px-4 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:bg-accent/50 hover:text-accent-foreground sm:pr-12 md:w-[500px]"
+      >
+        <Search className="mr-2 h-4 w-4 shrink-0" />
+        <span>Buscar trámite (CIPE, Licencia, Rentas...)</span>
+        <kbd className="pointer-events-none absolute right-4 top-3.5 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+          <span className="text-xs">⌘</span>K
+        </kbd>
+      </button>
 
-      {open && filtered.length > 0 && (
-        <div className="absolute top-full z-50 mt-2 w-full rounded-lg border border-border bg-card p-1 shadow-lg">
-          {filtered.map((guide) => (
-            <Link
-              key={guide.slug}
-              href={`/tramites/${guide.slug}`}
-              onClick={() => {
-                setOpen(false)
-                setQuery("")
-              }}
-              className="block rounded-md px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-secondary"
-            >
-              <span className="font-medium">{guide.shortTitle}</span>
-              <span className="ml-2 text-muted-foreground">{guide.description.slice(0, 60)}...</span>
-            </Link>
-          ))}
-        </div>
-      )}
-
-      {open && query.trim() && filtered.length === 0 && (
-        <div className="absolute top-full z-50 mt-2 w-full rounded-lg border border-border bg-card p-4 shadow-lg">
-          <p className="text-center text-sm text-muted-foreground">
-            No encontramos resultados para &ldquo;{query}&rdquo;
-          </p>
-        </div>
-      )}
-    </div>
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput placeholder="Buscar trámite..." disabled={loading} />
+        <CommandList>
+          {loading && <CommandEmpty>Cargando trámites...</CommandEmpty>}
+          {!loading && <CommandEmpty>No encontramos resultados.</CommandEmpty>}
+          <CommandGroup heading="Trámites">
+            {guides.map((guide) => (
+              <CommandItem
+                key={guide.id}
+                onSelect={() => {
+                  setOpen(false)
+                  router.push(`/tramites/${guide.id}`)
+                }}
+                className="flex flex-col items-start gap-1 py-3"
+              >
+                <span className="font-medium text-foreground">{guide.titulo_abreviado}</span>
+                <span className="text-xs text-muted-foreground line-clamp-1">{guide.description}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
+    </>
   )
 }
