@@ -27,13 +27,13 @@ export interface Guide {
   fecha_ultima_actualizacion: string
   definicion: string
   destinatarios: string
-  requisitos: Array<{detalle: string, id:number}>
+  requisitos: Array<{ detalle: string, id: number }>
   costo: {
     monto: string
     formas_pago: string
     fecha_actualizacion: string
   }
-  sedes: Array< {
+  sedes: Array<{
     direccion: string
     horarios: string
     mapsUrl: string
@@ -58,15 +58,14 @@ export async function getGuides(): Promise<Guide[]> {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/tramites/`
     )
-      const guidesData = response.data.map((tramite: Guide)=>{
-        return {
-          ...
-          tramite,
-          slug: tramite.titulo_abreviado.toLowerCase().replace(/\s+/g, "-")
-        }
-      })
-      return guidesData
-    
+    const guidesData = response.data.map((tramite: Guide) => {
+      return {
+        ...tramite,
+        slug: tramite.titulo_abreviado.toLowerCase().replace(/\s+/g, "-")
+      }
+    })
+    return guidesData
+
   } catch (error) {
     console.error("Error fetching guides:", error)
     // Fallback: retorna array vacío o datos locales
@@ -80,7 +79,7 @@ export async function getGuideById(id: number): Promise<Guide | null> {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/tramites/${id}/`
     )
-    return {...response.data, slug: response.data.titulo_abreviado.toLowerCase().replace(/\s+/g, "-")}
+    return { ...response.data, slug: response.data.titulo_abreviado.toLowerCase().replace(/\s+/g, "-") }
   } catch (error) {
     console.error("Error fetching guide:", error)
     return null
